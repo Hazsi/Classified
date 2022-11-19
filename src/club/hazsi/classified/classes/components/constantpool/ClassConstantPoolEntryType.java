@@ -1,11 +1,12 @@
-package club.hazsi.classified.classes.components;
+package club.hazsi.classified.classes.components.constantpool;
 
+import club.hazsi.classified.classes.components.ClassMajorVersion;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum ClassConstantPoolType {
+public enum ClassConstantPoolEntryType {
     UTF8(1, 0),
     INTEGER(3, 4),
     FLOAT(4, 4),
@@ -40,7 +41,7 @@ public enum ClassConstantPoolType {
      *                 The same 2 byte minimum as specified in 4.4.0 of the Java class file format specifications
      *                 still applies.
      */
-    ClassConstantPoolType(int value, int dataSize) {
+    ClassConstantPoolEntryType(int value, int dataSize) {
         this(value, dataSize, 45);
     }
 
@@ -50,8 +51,8 @@ public enum ClassConstantPoolType {
      * @param value The tag byte used to identify the tag/type
      * @return The ClassConstantPoolType value associated with {@code value}, or null if none is found
      */
-    public static ClassConstantPoolType getByValue(int value) {
-        for (ClassConstantPoolType type : values()) {
+    public static ClassConstantPoolEntryType getByValue(int value) {
+        for (ClassConstantPoolEntryType type : values()) {
             if (type.getValue() == value) return type;
         }
         return null;

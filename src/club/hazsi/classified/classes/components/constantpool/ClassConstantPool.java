@@ -1,4 +1,4 @@
-package club.hazsi.classified.classes.components;
+package club.hazsi.classified.classes.components.constantpool;
 
 import lombok.Getter;
 
@@ -8,8 +8,8 @@ import java.util.Arrays;
 @Getter
 public class ClassConstantPool {
     private final int tableSize;
-    private final int length = 0;
-    private final ArrayList<ClassConstantPoolEntry> entries = new ArrayList<>();
+    private final int length;
+    private final ArrayList<ClassConstantPoolEntry<?>> entries = new ArrayList<>();
 
     public ClassConstantPool(byte[] classBytes) {
         this.tableSize = Byte.toUnsignedInt(classBytes[9]) - 1;
@@ -20,11 +20,17 @@ public class ClassConstantPool {
 
         for (int currentEntryIndex = 0; currentEntryIndex < this.tableSize - 1; currentEntryIndex++) {
             byte[] currentEntryBytes = Arrays.copyOfRange(classBytes, entryOffset, classBytes.length);
-            ClassConstantPoolEntry currentEntry = new ClassConstantPoolEntry(currentEntryBytes);
+            ClassConstantPoolEntry<?> currentEntry = ClassConstantPoolEntryFactory.make(currentEntryBytes);
 
             entryOffset += currentEntry.getSize();
             this.entries.add(currentEntry);
         }
+
+        this.length = entryOffset - 10;     // The entryOffset variable will be 10 higher than the actual byte length
+                                            // of the constant pool, as we started with a value of 10 because the
+                                            // constant pool starts at an offset of 10 bytes. In other words, at this
+                                            // point, entryOffset represents the OFFSET of the end of the constant
+                                            // pool, and subtracting 10 represents only the size of the pool.
     }
 
     /**
