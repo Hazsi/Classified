@@ -3,12 +3,10 @@ package club.hazsi.classified;
 import club.hazsi.classified.classes.ClassFile;
 import club.hazsi.classified.classes.components.constantpool.ClassConstantPoolEntry;
 import club.hazsi.classified.classes.components.constantpool.ClassConstantPoolEntryType;
-import club.hazsi.classified.classes.components.constantpool.entry.ClassPoolEntry;
 import club.hazsi.classified.classes.components.fieldtable.ClassFieldTableEntry;
 
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.Arrays;
 
 public class Classified {
 
@@ -75,5 +73,19 @@ public class Classified {
                     "\", entry descriptor: \"" + this.classFile.getConstantPool().getEntries().get(entry.getDescriptorIndex() - 1).getParsedData() + "\"");
             System.out.println("\t\tEntry AttributeInfo count: " + entry.getAttributeInfos().size());
         }
+
+//        System.out.println("\n~~~~~~~~~~~~~~~~~~~~~~~~~ Method Table ~~~~~~~~~~~~~~~~~~~~~~~");
+//        System.out.println("Method Table length: " + this.classFile.getMethodTable().getLength() + " bytes");
+//        System.out.println("Method Table table size: " + this.classFile.getMethodTable().getMethods().size());
+//
+//        for (int i = 1; i < this.classFile.getMethodTable().getMethods().size() + 1; i++) {
+//            ClassMethodTableEntry entry = this.classFile.getMethodTable().getMethods().get(i - 1);
+//
+//            System.out.println("\tMethod Table entry #" + i + ":");
+//            System.out.println("\t\tEntry access flags: " + entry.getAccessFlags());
+//            System.out.println("\t\tEntry name: \"" + this.classFile.getConstantPool().getEntries().get(entry.getNameIndex() - 1).getParsedData() +
+//                    "\", entry descriptor: \"" + this.classFile.getConstantPool().getEntries().get(entry.getDescriptorIndex() - 1).getParsedData() + "\"");
+//            System.out.println("\t\tEntry AttributeInfo count: " + entry.getAttributeInfos().size());
+//        }
     }
 }

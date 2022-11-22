@@ -12,12 +12,12 @@ import java.util.Arrays;
  * each class pool entry is expected to contain an array of at least two bytes of information about the specific
  * constant.<br><br>
  *
- * Taken from the aforementioned section of the Java class file format specifications, a pseudocode representation of
- * a constant pool entry can be written as:
+ * Taken from the aforementioned section of the Java class file format specifications, a C-like pseudocode
+ * representation of a constant pool entry can be written as:
  *
  * <pre>{@code
  * cp_info {
- *     u1 tag;
+ *     u1 tag; // The type ("tag") of the entry, values linked above
  *     u1 info[]; // Must be at least 2 bytes, depending on the value of tag
  * }
  * }</pre>
@@ -26,10 +26,18 @@ import java.util.Arrays;
  * These data formats are further elaborated on in the same section of the specifications, from 4.4.1 through to
  * 4.4.10.<br><br>
  *
+ * In Classified, each tag has their own implementation extending this class. These implementations <b>must override
+ * the {@code getParsedData()} method</b> present in this class. These method implementations are expected to parse
+ * the raw {@code data[]} byte array into clean data of type <b>T</b> (see type parameter comment).
+ *
+ * <br><br>
+ *
  * In Classified's implementation of the constant pool entry, data is stored uniformly as a byte array. Instead of
  * parsing this data based on the type at instantiation, individual methods are provided for the parsing of this data
  * to each of the data (info[], from the pseudocode example) types in the specification.
  *
+ * @param <T> The data type of which subsequent implementations of this class should parse their data to. Tags with
+ *           multiple variables should use the {@code Tuple2} and {@code Tuple3} classes.
  * @author Hazsi
  * @since 11/18/22
  */
@@ -50,11 +58,13 @@ public class ClassConstantPoolEntry<T> {
      * accurately resemble a constant pool entry (plus any amount of arbitrary class data afterwards) may result in
      * undocumented behaviour.<br><br>
      *
-     * This constructor should only be used privately and by implementations of this method, this raw class itself
-     * should almost never be used; instead, the {@code factory(byte[])} method should be used instead to return a
-     * new instance of the appropriate implementation of this class
+     * <i>This constructor should only be used privately and by implementations of this method, this raw class itself
+     * should almost never be used; instead, </i><b>the {@code factory(byte[])} method should be used instead</b><i> to
+     * return a new instance of the appropriate implementation of this class.</i><br><br>
+     *
+     * @see ClassConstantPoolEntryFactory
      * @param classBytes The data representing the pool entry (type/tag data size + 1 for the tag itself), plus any
-     *                number of arbitrary bytes afterwards which are disregarded
+     *                number of arbitrary bytes afterwards which are disregarded.
      */
     protected ClassConstantPoolEntry(byte[] classBytes) {
         final int tag = Byte.toUnsignedInt(classBytes[0]);
@@ -88,11 +98,17 @@ public class ClassConstantPoolEntry<T> {
         throw new UnsupportedOperationException("This method must be implemented!");
     }
 
-    // TODO write this javadoc
-    // INCLUDES THE TAG/TYPE!!! ONE BYTE PREFIXED COMPARED TO NORMAL DATA
+    /**
+     * Used to calculate the variable length of a UTF-8 constant pool entry. This method should not be used publicly,
+     * and should only be called internally when calculating the {@code size} field.
+     *
+     * @param data The raw data of the constant pool entry, <b>including the leading tag byte</b>
+     * @return The integer data length, in bytes, of the UTF-8 constant pool entry, plus any number of arbitrary
+     * bytes afterwards which are disregarded.
+     */
     private int determineUTFSize(byte[] data) {
-        if (!this.type.equals(ClassConstantPoolEntryType.UTF8))     // This method should only be invoked on constant pool
-            throw new UnsupportedOperationException();              // entries with the UTF-8 tag type.
+        if (!this.type.equals(ClassConstantPoolEntryType.UTF8))     // This method should only be invoked on constant
+            throw new UnsupportedOperationException();              // pool entries with the UTF-8 tag type.
 
         // TODO, this is supposed to be a 16 bit number across data bytes 1 and 2, but only 2 is used here.
         return Byte.toUnsignedInt(data[2]) + 2;

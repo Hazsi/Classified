@@ -5,6 +5,7 @@ import lombok.Getter;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+// TODO write this javadoc
 @Getter
 public class ClassConstantPool {
     private final int tableSize;

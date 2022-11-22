@@ -20,7 +20,7 @@ public class ClassFile {
     private final ClassConstantPool constantPool;
     private final ClassInterfaceTable interfaceTable;
     private final ClassFieldTable fieldTable;
-//    private final ClassMethodTable methodTable;
+    private final ClassMethodTable methodTable;
 
     public ClassFile(Path classPath) throws IOException {
         this(Files.readAllBytes(classPath));
@@ -48,9 +48,9 @@ public class ClassFile {
         this.fieldTable = new ClassFieldTable(
                 Arrays.copyOfRange(classBytes, 16 + offset, classBytes.length));
 
-//        offset += this.fieldTable.getLength();
-//
-//        this.methodTable = new ClassMethodTable(
-//                Arrays.copyOfRange(classBytes, 20 + offset, classBytes.length));
+        offset += this.fieldTable.getLength();
+
+        this.methodTable = new ClassMethodTable(
+                Arrays.copyOfRange(classBytes, 18 + offset, classBytes.length));
     }
 }

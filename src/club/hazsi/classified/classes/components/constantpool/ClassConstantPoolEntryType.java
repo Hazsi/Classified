@@ -4,6 +4,7 @@ import club.hazsi.classified.classes.components.ClassMajorVersion;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+// TODO write javadoc
 @Getter
 @AllArgsConstructor
 public enum ClassConstantPoolEntryType {
