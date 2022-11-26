@@ -5,7 +5,7 @@ package club.hazsi.classified.classes.components;
  * representation of the Java version, correct to Oracle specifications.
  *
  * @author Hazsi
- * @since 11/18/22
+ * @since Classified 1.0
  */
 public record ClassMajorVersion(int version) {
 

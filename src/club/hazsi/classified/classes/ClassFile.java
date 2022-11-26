@@ -1,56 +1,54 @@
 package club.hazsi.classified.classes;
 
-import club.hazsi.classified.classes.components.fieldtable.ClassFieldTable;
-import club.hazsi.classified.classes.components.ClassInterfaceTable;
-import club.hazsi.classified.classes.components.constantpool.ClassConstantPool;
-import club.hazsi.classified.classes.components.ClassMajorVersion;
-import club.hazsi.classified.classes.components.methodtable.ClassMethodTable;
-import lombok.Getter;
+import club.hazsi.classified.util.ClassUtil;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Arrays;
+import java.nio.file.*;
 
-@Getter
-public class ClassFile {
-    private final byte[] rawBytes;
-    private final int minorVersion;
-    private final ClassMajorVersion majorVersion;
-    private final ClassConstantPool constantPool;
-    private final ClassInterfaceTable interfaceTable;
-    private final ClassFieldTable fieldTable;
-    private final ClassMethodTable methodTable;
+public final class ClassFile {
+    private final ClassAttributes attributes;
 
-    public ClassFile(Path classPath) throws IOException {
+    /**
+     * Constructs a new ClassFile from the provided path, as a String. If the provided path isn't valid, a
+     * {@link java.nio.file.NoSuchFileException} is thrown. If an IO error occurs while reading the provided path, a
+     * {@link IOException} is thrown instead.
+     *
+     * @param classPath The full String path of an existent class file to be loaded
+     * @throws IOException If an IO error occurs while reading from the provided path
+     * @throws ClassFormatError If the provided class is corrupt or otherwise invalid
+     */
+    public ClassFile(String classPath) throws IOException, ClassFormatError {
+        this(Paths.get(classPath));
+    }
+
+    /**
+     * Constructs a new ClassFile from the provided path, as a {@link Path}. If the provided path isn't valid, a
+     * {@link java.nio.file.NoSuchFileException} is thrown. If an IO error occurs while reading the provided path, a
+     * {@link IOException} is thrown instead.
+     *
+     * @param classPath The full {@link Path} path of an existent class file to be loaded
+     * @throws IOException If an IO error occurs while reading from the provided path
+     * @throws ClassFormatError If the provided class is corrupt or otherwise invalid
+     */
+    public ClassFile(Path classPath) throws IOException, ClassFormatError {
         this(Files.readAllBytes(classPath));
     }
 
-    public ClassFile(byte[] classBytes) {
-        if (!ClassUtil.isValidClassFile(classBytes)) throw new ClassFormatError();
+    /**
+     * Constructs a new ClassFile from the provided array of byte composing the class. If the provided bytes do not
+     * accurately resemble a valid class, a {@link ClassFormatError} is thrown with details given.
+     *
+     * @param classBytes A byte array composing the class file to be loaded
+     * @throws ClassFormatError If the provided class is corrupt or otherwise invalid
+     */
+    public ClassFile(byte[] classBytes) throws ClassFormatError {
+        if (!ClassUtil.isClassFile(classBytes))
+            throw new ClassFormatError("not a valid class!");
 
-        int offset = 0;
+        this.attributes = new ClassAttributes(classBytes);
+    }
 
-        this.rawBytes = classBytes;
-        this.minorVersion = Byte.toUnsignedInt(classBytes[5]);
-        this.majorVersion = new ClassMajorVersion(classBytes);
-        this.constantPool = new ClassConstantPool(classBytes);
-
-        offset += this.constantPool.getLength();
-        
-        this.interfaceTable = new ClassInterfaceTable(
-                Arrays.copyOfRange(classBytes, 16 + offset, classBytes.length));
-
-        offset += this.interfaceTable.getLength();
-
-        // This should be 18, not 16. I'm not entirely sure why it needs to be 16 just yet, but if issues
-        // pop up later with strange field table data, come back to this. TODO investigate
-        this.fieldTable = new ClassFieldTable(
-                Arrays.copyOfRange(classBytes, 16 + offset, classBytes.length));
-
-        offset += this.fieldTable.getLength();
-
-        this.methodTable = new ClassMethodTable(
-                Arrays.copyOfRange(classBytes, 18 + offset, classBytes.length));
+    public ClassAttributes getAttributes() {
+        return this.attributes;
     }
 }
