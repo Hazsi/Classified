@@ -1,17 +1,17 @@
-package club.hazsi.classified;
+package club.hazsi.demo;
 
 import club.hazsi.classified.classes.ClassFile;
 
 import java.io.IOException;
 
-public class ClassifiedTesting {
+public class ClassifiedDemo {
 
     public ClassFile classFile;
 
-    public ClassifiedTesting() {
+    public ClassifiedDemo() {
         try {
 //            this.classFile = new ClassFile(Paths.get("C:/Users/cwest/Desktop/Main.class"));
-            this.classFile = new ClassFile("C:/Users/cwest/Desktop/Notification.class");
+            this.classFile = ClassFile.fromDisk("C:/Users/cwest/Desktop/Notification.class");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -83,5 +83,9 @@ public class ClassifiedTesting {
 //                    "\", entry descriptor: \"" + this.classFile.getConstantPool().getEntries().get(entry.getDescriptorIndex() - 1).getParsedData() + "\"");
 //            System.out.println("\t\tEntry AttributeInfo count: " + entry.getAttributeInfos().size());
 //        }
+    }
+
+    public static void main(String[] args) {
+        new ClassifiedDemo();
     }
 }

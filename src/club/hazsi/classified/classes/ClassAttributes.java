@@ -8,9 +8,8 @@ import club.hazsi.classified.classes.components.methodtable.ClassMethodTable;
 
 import java.util.Arrays;
 
-// TODO javadoc
+// TODO javadoc, getters
 public final class ClassAttributes {
-    private final byte[] rawBytes;
     private final int minorVersion;
     private final ClassMajorVersion majorVersion;
     private final ClassConstantPool constantPool;
@@ -21,7 +20,6 @@ public final class ClassAttributes {
     public ClassAttributes(byte[] classBytes) {
         int offset = 0;
 
-        this.rawBytes = classBytes;
         this.minorVersion = Byte.toUnsignedInt(classBytes[5]);
         this.majorVersion = new ClassMajorVersion(classBytes);
         this.constantPool = new ClassConstantPool(classBytes);

@@ -1,5 +1,7 @@
 package club.hazsi.classified.util;
 
+import java.io.*;
+
 public class ClassUtil {
 
     /**
@@ -16,5 +18,15 @@ public class ClassUtil {
         boolean BA = Byte.toUnsignedInt(classBytes[2]) == 0xBA;
         boolean BE = Byte.toUnsignedInt(classBytes[3]) == 0xBE;
         return CA && FE && BA && BE;
+    }
+
+    // todo javadoc
+    public static byte[] getClassBytes(Class<?> clazz) throws IOException {
+        try (ByteArrayOutputStream byteArrayStream = new ByteArrayOutputStream();
+             ObjectOutputStream objectStream = new ObjectOutputStream(byteArrayStream)) {
+
+            objectStream.writeObject(clazz);
+            return byteArrayStream.toByteArray();
+        }
     }
 }
