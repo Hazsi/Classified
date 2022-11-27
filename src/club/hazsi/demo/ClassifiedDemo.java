@@ -1,6 +1,7 @@
 package club.hazsi.demo;
 
 import club.hazsi.classified.classes.ClassFile;
+import club.hazsi.classified.classes.components.constantpool.ClassConstantPool;
 
 import java.io.IOException;
 
@@ -10,11 +11,29 @@ public class ClassifiedDemo {
 
     public ClassifiedDemo() {
         try {
-//            this.classFile = new ClassFile(Paths.get("C:/Users/cwest/Desktop/Main.class"));
             this.classFile = ClassFile.fromDisk("C:/Users/cwest/Desktop/Notification.class");
-        } catch (IOException e) {
+
+            final ClassConstantPool constantPool = this.classFile.getAttributes().getConstantPool();
+
+            for (int i = 0; i < classFile.getAttributes().getFieldTable().getFields().size(); i++) {
+                final int nameIndex = classFile.getAttributes().getFieldTable().getFields().get(i).getNameIndex();
+                final int descIndex = classFile.getAttributes().getFieldTable().getFields().get(i).getDescriptorIndex();
+                final int flags = classFile.getAttributes().getFieldTable().getFields().get(i).getAccessFlags();
+
+                System.out.println(constantPool.getEntries().get(nameIndex).getParsedData() + "\t" +
+                        constantPool.getEntries().get(descIndex).getParsedData() + "\t" + String.format("0x%04X", flags));
+            }
+
+        } catch (Exception e) {
             e.printStackTrace();
         }
+
+//        try {
+////            this.classFile = new ClassFile(Paths.get("C:/Users/cwest/Desktop/Main.class"));
+//            this.classFile = ClassFile.fromDisk("C:/Users/cwest/Desktop/Notification.class");
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
 
 //        System.out.println(Arrays.toString(this.classFile.getRawBytes()));
 

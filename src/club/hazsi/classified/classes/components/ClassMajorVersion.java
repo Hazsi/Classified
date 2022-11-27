@@ -7,7 +7,9 @@ package club.hazsi.classified.classes.components;
  * @author Hazsi
  * @since 1.0
  */
-public record ClassMajorVersion(int version) {
+public class ClassMajorVersion {
+
+    private final int version;
 
     /**
      * Using this constructor allows for the creation of a ClassMajorVersion instance directly from the raw bytes
@@ -15,7 +17,7 @@ public record ClassMajorVersion(int version) {
      * @param classBytes A classes raw bytes
      */
     public ClassMajorVersion(byte[] classBytes) {
-        this(classBytes[7]); // Per the JVM specifications, the class major version always lays at the 7th byte
+        this.version = classBytes[7];   // Per the JVM spec, the class major version always lays at the 7th byte
     }
 
     /**
@@ -25,7 +27,7 @@ public record ClassMajorVersion(int version) {
      *
      * @return A user-friendly representation of the classes Java major version number
      */
-    public String name() {
+    public String getName() {
         final int versionOffset = 44;   // Class major versions are offset by a value of 44 from their Java versions
                                         // (see https://docs.oracle.com/javase/specs/jvms/se17/html/jvms-4.html#jvms-4.1-200-B.2)
 

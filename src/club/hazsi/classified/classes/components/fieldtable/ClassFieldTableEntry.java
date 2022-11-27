@@ -2,7 +2,7 @@ package club.hazsi.classified.classes.components.fieldtable;
 
 import club.hazsi.classified.classes.components.AttributeInfo;
 import club.hazsi.classified.classes.components.constantpool.ClassConstantPoolEntry;
-import lombok.Getter;
+import club.hazsi.classified.util.ByteUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,23 +19,22 @@ import java.util.Arrays;
  *
  * <pre>{@code
  * field_info {
- *     u2               access_flags;
- *     u2               name_index;
- *     u2               descriptor_index;
- *     u2               attributes_count;
- *     attribute_info   attributes[attribute_count];
+ *     u2               access_flags;       // Bitfield of field access flags
+ *     u2               name_index;         // The CP index of the field name
+ *     u2               descriptor_index;   // The CP index of the descriptor name
+ *     u2               attributes_count;   // Attributes array size
+ *     attribute_info   attributes[attribute_count];    // Array of attributes
  * }
  * }</pre>
  *
  * Unlike {@link ClassConstantPoolEntry}, the size of the entry and the format of the data stored within it is always
  * constant and conforms to the same standard as above. Attribute info is defined in section 4.7 of the Java class file
  * format specifications, and is implemented by Classified in {@link AttributeInfo}. However, due to the volatile size
- * of {@link AttributeInfo}, this entry does not have a set length and must be calculated in construction.
+ * of {@link AttributeInfo}, this entry does not have a set length and must be calculated in construction.<br><br>
  *
  * @author Hazsi
- * @since 11/19/22
+ * @since 1.0
  */
-@Getter
 public class ClassFieldTableEntry {
     private final int length;
     private final int accessFlags; // TODO move this to an ArrayList of FieldAccessFlags instead of just the raw bitfield
@@ -46,7 +45,7 @@ public class ClassFieldTableEntry {
     // TODO write this javadoc
     public ClassFieldTableEntry(byte[] classBytes) {
 
-        final int attributeInfoCount = classBytes[7];
+        final int attributeInfoCount = ByteUtil.readByte(classBytes, 7);
         int offset = 8;
 
         for (int currentAttributeIndex = 0; currentAttributeIndex < attributeInfoCount; currentAttributeIndex++) {
@@ -56,10 +55,29 @@ public class ClassFieldTableEntry {
             offset += currentAttributeInfo.getLength();
         }
 
-        // TODO all of these will be wrong! only checking largest byte! (flags is a bitfield!!!!)
-        this.accessFlags = Byte.toUnsignedInt(classBytes[1]);
-        this.nameIndex = Byte.toUnsignedInt(classBytes[3]);
-        this.descriptorIndex = Byte.toUnsignedInt(classBytes[5]);
+        this.accessFlags = ByteUtil.readWORD(classBytes, 0);
+        this.nameIndex = ByteUtil.readWORD(classBytes, 2);
+        this.descriptorIndex = ByteUtil.readWORD(classBytes, 4);
         this.length = offset;
+    }
+
+    public int getLength() {
+        return length;
+    }
+
+    public int getAccessFlags() {
+        return accessFlags;
+    }
+
+    public int getNameIndex() {
+        return nameIndex;
+    }
+
+    public int getDescriptorIndex() {
+        return descriptorIndex;
+    }
+
+    public ArrayList<AttributeInfo> getAttributeInfos() {
+        return attributeInfos;
     }
 }

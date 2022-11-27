@@ -1,6 +1,7 @@
 package club.hazsi.classified.classes.components.constantpool.entry;
 
 import club.hazsi.classified.classes.components.constantpool.ClassConstantPoolEntry;
+import club.hazsi.classified.util.ByteUtil;
 
 public class LongPoolEntry extends ClassConstantPoolEntry<Long> {
     /**
@@ -32,7 +33,6 @@ public class LongPoolEntry extends ClassConstantPoolEntry<Long> {
      */
     @Override
     public Long getParsedData() {
-        // TODO PROBLEMS WITH THIS (only one byte, not FOUR...)
-        return Byte.toUnsignedLong(this.getData()[3]);
+        return ByteUtil.readQWORD(this.getData(), 0);
     }
 }

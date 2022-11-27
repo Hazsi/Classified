@@ -41,4 +41,28 @@ public final class ClassAttributes {
         this.methodTable = new ClassMethodTable(
                 Arrays.copyOfRange(classBytes, 18 + offset, classBytes.length));
     }
+
+    public int getMinorVersion() {
+        return minorVersion;
+    }
+
+    public ClassMajorVersion getMajorVersion() {
+        return majorVersion;
+    }
+
+    public ClassConstantPool getConstantPool() {
+        return constantPool;
+    }
+
+    public ClassInterfaceTable getInterfaceTable() {
+        return interfaceTable;
+    }
+
+    public ClassFieldTable getFieldTable() {
+        return fieldTable;
+    }
+
+    public ClassMethodTable getMethodTable() {
+        return methodTable;
+    }
 }

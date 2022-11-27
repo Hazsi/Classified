@@ -1,5 +1,6 @@
 package club.hazsi.classified.classes.components.constantpool;
 
+import club.hazsi.classified.util.ByteUtil;
 import lombok.Getter;
 
 import java.util.Arrays;
@@ -17,8 +18,8 @@ import java.util.Arrays;
  *
  * <pre>{@code
  * cp_info {
- *     u1 tag; // The type ("tag") of the entry, values linked above
- *     u1 info[]; // Must be at least 2 bytes, depending on the value of tag
+ *     u1 tag;      // The type ("tag") of the entry, values linked above
+ *     u1 info[];   // Must be at least 2 bytes, depending on the value of tag
  * }
  * }</pre>
  *
@@ -110,7 +111,6 @@ public class ClassConstantPoolEntry<T> {
         if (!this.type.equals(ClassConstantPoolEntryType.UTF8))     // This method should only be invoked on constant
             throw new UnsupportedOperationException();              // pool entries with the UTF-8 tag type.
 
-        // TODO, this is supposed to be a 16 bit number across data bytes 1 and 2, but only 2 is used here.
-        return Byte.toUnsignedInt(data[2]) + 2;
+        return ByteUtil.readWORD(data, 1) + 2;
     }
 }

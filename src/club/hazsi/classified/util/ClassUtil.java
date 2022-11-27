@@ -2,7 +2,11 @@ package club.hazsi.classified.util;
 
 import java.io.*;
 
-public class ClassUtil {
+/**
+ * @author Hazsi
+ * @since 1.0
+ */
+public final class ClassUtil {
 
     /**
      * Checks if a given file (in byte array form) is a Java class file by checking for the presence of the
@@ -20,7 +24,13 @@ public class ClassUtil {
         return CA && FE && BA && BE;
     }
 
-    // todo javadoc
+    /**
+     * Converts a class into an array of bytes comprising the class file.
+     *
+     * @param clazz The class to retrieve data from
+     * @return The class file corresponding to {@code clazz}, in byte array form
+     * @throws IOException If an IO error occurs while reading and converting the raw class data
+     */
     public static byte[] getClassBytes(Class<?> clazz) throws IOException {
         try (ByteArrayOutputStream byteArrayStream = new ByteArrayOutputStream();
              ObjectOutputStream objectStream = new ObjectOutputStream(byteArrayStream)) {

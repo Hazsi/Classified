@@ -1,6 +1,7 @@
 package club.hazsi.classified.classes.components.constantpool.entry;
 
 import club.hazsi.classified.classes.components.constantpool.ClassConstantPoolEntry;
+import club.hazsi.classified.util.ByteUtil;
 import club.hazsi.classified.util.Tuple3;
 
 public class InvokeDynamicPoolEntry extends ClassConstantPoolEntry<Tuple3<Integer, Integer, Integer>> {
@@ -31,9 +32,9 @@ public class InvokeDynamicPoolEntry extends ClassConstantPoolEntry<Tuple3<Intege
     @Override
     public Tuple3<Integer, Integer, Integer> getParsedData() {
         return new Tuple3<>(
-                Byte.toUnsignedInt(this.getData()[0]),
-                Byte.toUnsignedInt(this.getData()[1]),
-                Byte.toUnsignedInt(this.getData()[3]) // todo same problem as everywhere else, should be 2 and 3
+                ByteUtil.readByte(this.getData(), 0),
+                ByteUtil.readByte(this.getData(), 1),
+                ByteUtil.readWORD(this.getData(), 2)
         );
     }
 }

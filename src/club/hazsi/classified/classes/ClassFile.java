@@ -1,5 +1,6 @@
 package club.hazsi.classified.classes;
 
+import club.hazsi.classified.classes.loader.ByteClassLoader;
 import club.hazsi.classified.util.ClassUtil;
 
 import java.io.IOException;
@@ -10,7 +11,22 @@ import java.nio.file.*;
  * {@link ClassAttributes} object for the class that can be manipulated and read. ClassFile instances retain their raw
  * bytes to be read or placed back into the JVM, and are automatically updated when the {@link ClassAttributes} are
  * modified. A classes raw bytes can manually be set, automatically regenerating the ClassAttributes with the new
- * class data.
+ * class data.<br><br>
+ *
+ * <h2>Fields</h2>
+ * When a ClassFile is instantiated, the class itself is automatically analyzed and parsed into information that is
+ * accessible and modifiable.
+ *
+ * <ul>
+ *     <li>{@code rawBytes} - A raw byte array storing the bytes which compose the class. The byte array can be
+ *     manually set through the {@link #setRawBytes(byte[])} method, which automatically regenerates other fields
+ *     to match the newly defined class file. The byte array can be manually refreshed through invoking the
+ *     {@link #refreshRawBytes()} method.</li>
+ *     <li>{@code attributes} - A {@link ClassAttributes} instance parsing and storing all class data (constant pool,
+ *     interface/field/method tables, etc) that can be read and modified. Automatically generated on instantiation.
+ *     Cannot be directly set, but is automatically regenerated when the raw class bytes are set via the
+ *     {@link #setRawBytes(byte[])} method.</li>
+ * </ul>
  *
  * @since 1.0
  * @author Hazsi
@@ -106,6 +122,31 @@ public final class ClassFile {
         this.attributes = new ClassAttributes(classBytes);
     }
 
+    // TODO - regenerate class bytes from class attributes
+    public void refreshRawBytes() {
+
+    }
+
+    /**
+     * Loads the class (as defined by the current {@code rawBytes}) into the current JVM. This method should not
+     * be used if a class by the same package and name already exists in the JVM.
+     *
+     * @since 1.0
+     */
+    public void load() {
+        ByteClassLoader.load(this.rawBytes);
+    }
+
+    /**
+     * Sets the class' raw bytes. Similar to the private constructor, this method ensures that the provided bytes
+     * are a valid class -- throwing a {@link ClassFormatError} if this is not the case -- and regenerating the
+     * ClassAttributes instance to match the new class definition.
+     *
+     * @param classBytes The new class bytes to define the class by
+     * @throws ClassFormatError If the provided file is not a class, is malformed and does not follow the class
+     * specifications, or is otherwise invalid
+     * @since 1.0
+     */
     public void setRawBytes(byte[] classBytes) throws ClassFormatError {
         if (!ClassUtil.isClassFile(classBytes))
             throw new ClassFormatError("not a valid class!");
@@ -114,10 +155,16 @@ public final class ClassFile {
         this.attributes = new ClassAttributes(classBytes);
     }
 
+    /**
+     * @return The raw bytes making up the original class
+     */
     public byte[] getRawBytes() {
-        return rawBytes;
+        return this.rawBytes;
     }
 
+    /**
+     * @return The {@link ClassAttributes} instance belonging to this class
+     */
     public ClassAttributes getAttributes() {
         return this.attributes;
     }

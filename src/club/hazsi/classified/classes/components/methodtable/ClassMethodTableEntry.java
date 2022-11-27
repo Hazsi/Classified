@@ -3,6 +3,7 @@ package club.hazsi.classified.classes.components.methodtable;
 import club.hazsi.classified.classes.components.AttributeInfo;
 import club.hazsi.classified.classes.components.constantpool.ClassConstantPoolEntry;
 import club.hazsi.classified.classes.components.fieldtable.ClassFieldTable;
+import club.hazsi.classified.util.ByteUtil;
 import lombok.Getter;
 
 import java.util.ArrayList;
@@ -58,10 +59,9 @@ public class ClassMethodTableEntry {
             offset += currentAttributeInfo.getLength();
         }
 
-        // TODO all of these will be wrong! only checking largest byte! (flags is a bitfield!!!!)
-        this.accessFlags = Byte.toUnsignedInt(classBytes[1]);
-        this.nameIndex = Byte.toUnsignedInt(classBytes[3]);
-        this.descriptorIndex = Byte.toUnsignedInt(classBytes[5]);
+        this.accessFlags = ByteUtil.readWORD(classBytes, 0);
+        this.nameIndex = ByteUtil.readWORD(classBytes, 2);
+        this.descriptorIndex = ByteUtil.readWORD(classBytes, 4);
         this.length = offset;
     }
 }
