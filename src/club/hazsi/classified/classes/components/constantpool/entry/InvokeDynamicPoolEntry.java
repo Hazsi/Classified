@@ -13,7 +13,7 @@ public class InvokeDynamicPoolEntry extends ClassConstantPoolEntry<Tuple3<Intege
      * the entry's data is disregarded. <br><br>
      * <p>
      * The offset for the next entry can be found with the
-     * {@code ClassConstantPoolEntry#getSize()} method. Calling this constructor with erroneous data that doesn't
+     * {@link ClassConstantPoolEntry#getSize()} method. Calling this constructor with erroneous data that doesn't
      * accurately resemble a constant pool entry (plus any amount of arbitrary class data afterwards) may result in
      * undocumented behaviour.
      *
