@@ -1,5 +1,6 @@
 package club.hazsi.classified.classes.components.constantpool;
 
+import club.hazsi.classified.classes.ClassFile;
 import lombok.Getter;
 
 import java.util.ArrayList;
@@ -8,12 +9,14 @@ import java.util.Arrays;
 // TODO write this javadoc
 @Getter
 public class ClassConstantPool {
+    private final ClassFile parentClass;
     private final int tableSize;
     private final int length;
     private final ArrayList<ClassConstantPoolEntry<?>> entries = new ArrayList<>();
 
-    public ClassConstantPool(byte[] classBytes) {
+    public ClassConstantPool(byte[] classBytes, ClassFile parentClass) {
         this.tableSize = Byte.toUnsignedInt(classBytes[9]) - 1;
+        this.parentClass = parentClass;
 
         int entryOffset = 10;   // Used to keep track of the byte offset of the entry currently being parsed.
                                 // Per the classfile specification, the offset of the first entry will always be

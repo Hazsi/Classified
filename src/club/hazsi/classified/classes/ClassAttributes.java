@@ -10,6 +10,9 @@ import java.util.Arrays;
 
 // TODO javadoc, getters
 public final class ClassAttributes {
+
+    private final ClassFile parentClass;
+
     private final int minorVersion;
     private final ClassMajorVersion majorVersion;
     private final ClassConstantPool constantPool;
@@ -17,12 +20,13 @@ public final class ClassAttributes {
     private final ClassFieldTable fieldTable;
     private final ClassMethodTable methodTable;
 
-    public ClassAttributes(byte[] classBytes) {
+    public ClassAttributes(byte[] classBytes, ClassFile parentClass) {
         int offset = 0;
 
+        this.parentClass = parentClass;
         this.minorVersion = Byte.toUnsignedInt(classBytes[5]);
         this.majorVersion = new ClassMajorVersion(classBytes);
-        this.constantPool = new ClassConstantPool(classBytes);
+        this.constantPool = new ClassConstantPool(classBytes, parentClass);
 
         offset += this.constantPool.getLength();
 

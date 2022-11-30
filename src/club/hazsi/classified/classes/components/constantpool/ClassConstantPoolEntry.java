@@ -39,11 +39,14 @@ import java.util.Arrays;
  *
  * @param <T> The data type of which subsequent implementations of this class should parse their data to. Tags with
  *           multiple variables should use the {@code Tuple2} and {@code Tuple3} classes.
+ * @implNote {@link ClassConstantPoolEntry#getParsedData()} and {@link ClassConstantPoolEntry#getParsedDataAsString()}
+ * should be implemented by implementations of this class.
  * @author Hazsi
  * @since 11/18/22
  */
 @Getter
 public class ClassConstantPoolEntry<T> {
+    private final ClassConstantPool parentPool;
     private final ClassConstantPoolEntryType type;
     private final byte[] data;
     private final int size;
@@ -66,10 +69,23 @@ public class ClassConstantPoolEntry<T> {
      * @see ClassConstantPoolEntryFactory
      * @param classBytes The data representing the pool entry (type/tag data size + 1 for the tag itself), plus any
      *                number of arbitrary bytes afterwards which are disregarded.
+     * @param parentPool The {@link ClassConstantPool} instance this entry belongs to
      */
-    protected ClassConstantPoolEntry(byte[] classBytes) {
+    protected ClassConstantPoolEntry(byte[] classBytes, ClassConstantPool parentPool) {
         final int tag = Byte.toUnsignedInt(classBytes[0]);
         this.type = ClassConstantPoolEntryType.getByValue(tag);
+        this.parentPool = parentPool;
+
+        if (this.type.equals(ClassConstantPoolEntryType.UNKNOWN)) {                     // Throw an exception if the
+            throw new ClassFormatError("invalid constant pool entry type: " + tag);  // class file contains an
+        }                                                                               // invalid entry tag
+
+        final int classVersion = parentPool.getParentClass().getAttributes().getMajorVersion().getVersion();
+
+        if (this.type.getMinimumMajorClassVersion() > classVersion) {               // Throw an exception if the class
+            throw new ClassFormatError("type \"" + type.name() + "\" invalid" +  // file contains an entry tag that
+                    "type for major class version \"" + classVersion + "\"");       // shouldn't be possible
+        }
 
         final int dataSize = type.equals(ClassConstantPoolEntryType.UTF8) ?     // The UTF-8 tag does not have a
                 this.determineUTFSize(classBytes) : this.type.getDataSize();    // constant size, unlike all other tags,
@@ -86,7 +102,7 @@ public class ClassConstantPoolEntry<T> {
      * @return A parsed representation of the {@code data} field according to tag format
      */
     public T getParsedData() {
-        throw new UnsupportedOperationException("This method must be implemented!");
+        throw new UnsupportedOperationException("this method must be implemented!");
     }
 
     /**
@@ -96,7 +112,7 @@ public class ClassConstantPoolEntry<T> {
      * @return A human-readable String representation of the parsed data provided by {@code getParsedData()}.
      */
     public String getParsedDataAsString() {
-        throw new UnsupportedOperationException("This method must be implemented!");
+        throw new UnsupportedOperationException("this method must be implemented!");
     }
 
     /**

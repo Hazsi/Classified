@@ -5,9 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 // TODO write javadoc
-@Getter
-@AllArgsConstructor
 public enum ClassConstantPoolEntryType {
+    UNKNOWN(0, 0),
     UTF8(1, 0),
     INTEGER(3, 4),
     FLOAT(4, 4),
@@ -47,15 +46,48 @@ public enum ClassConstantPoolEntryType {
     }
 
     /**
+     * This constructor provides the ability to set the {@code minimumClassVersion} field manually, used when a
+     * constant pool type has been added in a version later than JDK 1.0 and must be manually specified. Additionally,
+     * this contructor is used interally by the {@link ClassConstantPoolEntryType#ClassConstantPoolEntryType(int, int)}
+     * constructor, used when a type **has** existed since JDK 1.0
+     * @param value The tag byte used to identify the tag/type
+     * @param dataSize The size of the data/info associated with the tag/type. <b>A value of 0 indicates that the
+     *                 size is not constant and can vary</b> (as of Java 19, only the UTF-8 tag is variable).
+     *                 The same 2 byte minimum as specified in 4.4.0 of the Java class file format specifications
+     *                 still applies.
+     * @param minimumMajorClassVersion The minimum {@link ClassMajorVersion} that the constant pool type will be
+     *                                 found in. If a type appears in a class major version where it shouldn't, a
+     *                                 {@link ClassFormatError} is thrown.
+     */
+    ClassConstantPoolEntryType(int value, int dataSize, int minimumMajorClassVersion) {
+        this.value = value;
+        this.dataSize = dataSize;
+        this.minimumMajorClassVersion = minimumMajorClassVersion;
+    }
+
+    /**
      * Returns a ClassConstantPoolType value based on the tag byte (raw hexadecimal value used to represent the tag or
      * data type). This method is used when parsing constant pool entries, as the tag/type is stored in this format
      * @param value The tag byte used to identify the tag/type
-     * @return The ClassConstantPoolType value associated with {@code value}, or null if none is found
+     * @return The ClassConstantPoolType value associated with {@code value}, or
+     * {@link ClassConstantPoolEntryType#UNKNOWN} if none is found
      */
     public static ClassConstantPoolEntryType getByValue(int value) {
         for (ClassConstantPoolEntryType type : values()) {
             if (type.getValue() == value) return type;
         }
-        return null;
+        return UNKNOWN;
+    }
+
+    public int getValue() {
+        return this.value;
+    }
+
+    public int getDataSize() {
+        return this.dataSize;
+    }
+
+    public int getMinimumMajorClassVersion() {
+        return this.minimumMajorClassVersion;
     }
 }

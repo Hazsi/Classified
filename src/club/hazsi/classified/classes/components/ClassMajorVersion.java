@@ -34,4 +34,9 @@ public class ClassMajorVersion {
         int javaVersion = this.version - versionOffset;
         return javaVersion < 5 ? ("JDK 1." + javaVersion) : ("Java SE " + javaVersion);
     }
+
+    //todo javadoc
+    public int getVersion() {
+        return this.version;
+    }
 }

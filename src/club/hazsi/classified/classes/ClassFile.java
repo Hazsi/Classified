@@ -119,7 +119,7 @@ public final class ClassFile {
             throw new ClassFormatError("not a valid class!");
 
         this.rawBytes = classBytes;
-        this.attributes = new ClassAttributes(classBytes);
+        this.attributes = new ClassAttributes(classBytes, this);
     }
 
     // TODO - regenerate class bytes from class attributes
@@ -152,7 +152,7 @@ public final class ClassFile {
             throw new ClassFormatError("not a valid class!");
 
         this.rawBytes = classBytes;
-        this.attributes = new ClassAttributes(classBytes);
+        this.attributes = new ClassAttributes(classBytes, this);
     }
 
     /**
