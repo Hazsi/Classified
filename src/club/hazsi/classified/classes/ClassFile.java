@@ -115,8 +115,7 @@ public final class ClassFile {
      * @since 1.0
      */
     private ClassFile(byte[] classBytes) throws ClassFormatError {
-        if (!ClassUtil.isClassFile(classBytes))
-            throw new ClassFormatError("not a valid class!");
+        if (!ClassUtil.isClassFile(classBytes)) throw new ClassFormatError("not a valid class!");
 
         this.rawBytes = classBytes;
         this.attributes = new ClassAttributes(classBytes, this);
@@ -148,8 +147,7 @@ public final class ClassFile {
      * @since 1.0
      */
     public void setRawBytes(byte[] classBytes) throws ClassFormatError {
-        if (!ClassUtil.isClassFile(classBytes))
-            throw new ClassFormatError("not a valid class!");
+        if (!ClassUtil.isClassFile(classBytes)) throw new ClassFormatError("not a valid class!");
 
         this.rawBytes = classBytes;
         this.attributes = new ClassAttributes(classBytes, this);
