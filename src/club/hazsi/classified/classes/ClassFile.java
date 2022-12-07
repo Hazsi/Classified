@@ -51,7 +51,7 @@ public final class ClassFile {
     public static ClassFile fromDisk(String classPath) throws IOException, ClassFormatError {
         return new ClassFile(Files.readAllBytes(Paths.get(classPath)));
     }
-
+    
     /**
      * Constructs a new ClassFile from the provided path, as a {@link Path}. If the provided path isn't valid, a
      * {@link java.nio.file.NoSuchFileException} is thrown. If an IO error occurs while reading the provided path, a

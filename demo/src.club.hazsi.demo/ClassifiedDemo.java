@@ -11,6 +11,8 @@ public class ClassifiedDemo {
 
     public ClassifiedDemo() {
         try {
+
+            // TODO load sample class from resources
             this.classFile = ClassFile.fromDisk("C:/Users/cwest/Desktop/Notification.class");
 
             final ClassConstantPool constantPool = this.classFile.getAttributes().getConstantPool();
